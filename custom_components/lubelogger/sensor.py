@@ -96,8 +96,10 @@ def parse_date(date_str: str | None) -> datetime | None:
     except (ValueError, AttributeError):
         pass
 
-    # Try common date formats (including MM/DD/YYYY from LubeLogger API)
+    # Try common date formats, prioritizing DD/MM/YYYY then MM/DD/YYYY
     formats = [
+        "%d/%m/%Y",  # Added: DD/MM/YYYY format
+        "%d/%m/%Y %H:%M:%S", # Added: DD/MM/YYYY with time
         "%m/%d/%Y",  # LubeLogger format: "12/17/2025"
         "%m/%d/%Y %H:%M:%S",
         "%Y-%m-%dT%H:%M:%S",
