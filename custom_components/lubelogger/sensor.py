@@ -138,23 +138,26 @@ class BaseLubeLoggerSensor(CoordinatorEntity, SensorEntity):
         super().__init__(coordinator)
         self._vehicle_id = vehicle_id
         self._vehicle_name = vehicle_name
+        self._vehicle_info = vehicle_info
         self._key = key
         self._attr_name = f"{vehicle_name} {sensor_name}"
         self._attr_unique_id = f"lubelogger_{vehicle_id}_{unique_id_suffix}"
         self._attr_device_class = device_class
         self._attr_state_class = state_class
         self._attr_native_unit_of_measurement = unit
+
+    @property
+    def device_info(self) -> DeviceInfo:
+        """Return the device info for the vehicle."""
+        make = self._vehicle_info.get("Make") or self._vehicle_info.get("make") or ""
+        model = self._vehicle_info.get("Model") or self._vehicle_info.get("model") or ""
+        year = str(self._vehicle_info.get("Year") or self._vehicle_info.get("year") or "")
         
-        # Extract make/model/year from vehicle info for device info
-        make = vehicle_info.get("Make") or vehicle_info.get("make") or ""
-        model = vehicle_info.get("Model") or vehicle_info.get("model") or ""
-        year = str(vehicle_info.get("Year") or vehicle_info.get("year") or "")
-        
-        self._attr_device_info = DeviceInfo(
-            identifiers={(DOMAIN, str(vehicle_id))},
-            name=vehicle_name,
+        return DeviceInfo(
+            identifiers={(DOMAIN, str(self._vehicle_id))},
+            name=self._vehicle_name,
             manufacturer=make or "LubeLogger",
-            model=model or vehicle_name,
+            model=model or self._vehicle_name,
             sw_version=year,
         )
 
